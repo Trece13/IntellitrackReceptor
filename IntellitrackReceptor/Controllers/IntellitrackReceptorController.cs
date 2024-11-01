@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using IntellitrackReceptor.Models;
 using IntellitrackReceptor.Services;
+using System.Diagnostics;
+using System.Diagnostics.Tracing;
 
 namespace IntellitrackReceptor.Controllers
 {
@@ -16,44 +18,59 @@ namespace IntellitrackReceptor.Controllers
     public class IntellitrackReceptorController : ControllerBase
     {
         private readonly ILogger<IntellitrackReceptorController> _logger;
-        //private readonly IHttpClientFactory _httpClientFactory;
         private readonly IReseptorService _reseptorService;
+        private readonly string _eventSource = "IntellitrackReceptorApp"; // Fuente de eventos
+        private readonly string _logName = "Application"; // Log de aplicación (por defecto)
 
-        //public IntellitrackReceptorController(ILogger<IntellitrackReceptorController> logger, IHttpClientFactory httpClientFactory)
         public IntellitrackReceptorController(ILogger<IntellitrackReceptorController> logger, IReseptorService reseptorService)
-        {
-            _logger = logger;
-            //_httpClientFactory = httpClientFactory;
-            _reseptorService = reseptorService;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> HandleEvent([FromBody] JsonElement data)
         {
             try
             {
-                   if (data.ValueKind == JsonValueKind.Array)
+                _logger = logger;
+                _reseptorService = reseptorService;
+                if (!EventLog.SourceExists(_eventSource))
+                {
+                    EventLog.CreateEventSource(_eventSource, _logName);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> HandleEvent([FromBody] JsonElement data, [FromHeader(Name = "Client-ID")] string clientId, [FromHeader(Name = "Client-Secret")] string clientSecret)
+        {
+            //var expectedClientId = configuration["Authentication:ClientId"];
+            //var expectedClientSecret = configuration["Authentication:ClientSecret"];
+            var expectedClientId = "77c3b787-783a-4188-a20f-49906e78d4e9";
+            var expectedClientSecret = "atc~PTRXjBYoM0Lz6hIvnH6QDc5GE1fpzjS8";
+
+            // Verificar si el Client ID y Client Secret coinciden
+            if (clientId != expectedClientId || clientSecret != expectedClientSecret)
+            {
+                _logger.LogWarning("Client ID o Client Secret inválidos");
+                return Unauthorized("Client ID o Client Secret inválidos.");
+            }
+
+            try
+            {
+                if (data.ValueKind == JsonValueKind.Array)
                 {
                     foreach (JsonElement eventData in data.EnumerateArray())
                     {
                         if (eventData.TryGetProperty("eventType", out JsonElement eventTypeElement))
                         {
                             var eventType = eventTypeElement.GetString();
-
-                            // Validación de suscripción
                             if (eventType == "Microsoft.EventGrid.SubscriptionValidationEvent")
                             {
                                 if (eventData.TryGetProperty("data", out JsonElement dataElement) &&
                                     dataElement.TryGetProperty("validationCode", out JsonElement validationCodeElement))
                                 {
                                     var validationCode = validationCodeElement.GetString();
-
-                                    //var responseData = new JObject                            
-                                    //{ "validationResponse", validationCode };
-
                                     _logger.LogInformation("Subscription validation event handled successfully");
                                     return Ok(new { validationResponse = validationCode });
-                                    //return Ok(responseData);
                                 }
                             }
                             // Manejo de otros eventos
@@ -64,18 +81,16 @@ namespace IntellitrackReceptor.Controllers
                                 {
                                     var blobUrl = blobUrlElement.GetString();
                                     _logger.LogInformation($"Blob created event received. URL: {blobUrl}");
-                                    // Procesa el evento del blob aquí...
                                 }
                             }
                             else
                             {
+                                EventLog.WriteEntry(_eventSource, "Se hara consultaal servicio rfid", EventLogEntryType.Information);
                                 eventData.TryGetProperty("data", out JsonElement dataElement);
                                 var eventObject = System.Text.Json.JsonSerializer.Deserialize<EventData>(dataElement.ToString());
                                 _logger.LogWarning($"Unhandled event type: {eventType}");
-
                                 _logger.LogWarning($"Unhandled event type: {eventType}");
 
-                                // Aquí hacemos la llamada a SendReseptorRequest
                                 var reseptorRequest = new ReseptorRequest
                                 {
                                     Rfid = eventObject.Data.IOTId,
@@ -85,18 +100,6 @@ namespace IntellitrackReceptor.Controllers
 
                                 var result = await _reseptorService.SendReseptorRequest(reseptorRequest);
 
-                            //    // Serializar el objeto ReseptorRequest a JSON
-                            //    var jsonContent = System.Text.Json.JsonSerializer.Serialize(reseptorRequest);
-                            //    var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                                //    // URL del método SendReseptorRequest
-                                //    var url = "https://gpt.tekni-plex.com:8092/IntellitrackReceptor/api/Reseptor/SendReseptorRequest"; // Cambia tu puerto
-
-                                //    // Crear una instancia de HttpClient usando IHttpClientFactory
-                                //    var httpClient = _httpClientFactory.CreateClient();
-
-                                //    // Realizar la solicitud POST al método SendReseptorRequest
-                                //    var response = await httpClient.PostAsync(url, content);
                             }
                         }
                         else
@@ -114,6 +117,15 @@ namespace IntellitrackReceptor.Controllers
             }
             catch (Exception ex)
             {
+                if (EventLog.SourceExists(_eventSource))
+                {
+                    EventLog.WriteEntry(_eventSource, "Error: "+ex, EventLogEntryType.Information);
+                }
+                else
+                {
+                    _logger.LogWarning($"La fuente de eventos '{_eventSource}' no existe. No se registró en el Visor de Eventos.");
+                }
+
                 _logger.LogError(ex, "Error processing the event");
                 return StatusCode(500, "Internal server error");
             }
@@ -121,13 +133,6 @@ namespace IntellitrackReceptor.Controllers
 
 
     }
-
-    //public class ReseptorRequest
-    //{
-    //    public string Rfid { get; set; }
-    //    public string Evnt { get; set; }
-    //    public string Logn { get; set; }
-    //}
 
     public class AssetData
     {

@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellyREceptor NEw\\IntellitrackReceptor (3)\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj": {}
+    "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellyREceptor NEw\\IntellitrackReceptor (3)\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj": {
+    "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellyREceptor NEw\\IntellitrackReceptor (3)\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj",
+        "projectUniqueName": "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj",
         "projectName": "IntellitrackReceptor",
-        "projectPath": "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellyREceptor NEw\\IntellitrackReceptor (3)\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj",
-        "packagesPath": "C:\\Users\\jccubillos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellyREceptor NEw\\IntellitrackReceptor (3)\\IntellitrackReceptor\\IntellitrackReceptor\\obj\\",
+        "projectPath": "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellitrackReceptor\\IntellitrackReceptor\\IntellitrackReceptor.csproj",
+        "packagesPath": "C:\\Users\\JCCubillos.PF4E6Y3R\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jccubillos\\OneDrive - Tekni-Plex, Inc\\Documents\\IntellitrackReceptor\\IntellitrackReceptor\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\jccubillos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\JCCubillos.PF4E6Y3R\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

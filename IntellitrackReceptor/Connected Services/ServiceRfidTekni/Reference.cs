@@ -1773,7 +1773,7 @@ namespace ServiceRfidTekni
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpsBinding_IService1))
             {
-                return new System.ServiceModel.EndpointAddress("https://gpbfpr.tekni-plex.com/RfidService/Service1.svc");
+                return new System.ServiceModel.EndpointAddress("https://gpbfpr.tekni-plex.com/RfidService1/Service1.svc");
             }
             throw new System.InvalidOperationException(string.Format("No se pudo encontrar un punto de conexión con el nombre \"{0}\".", endpointConfiguration));
         }

@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-      "https://gpbfpr.tekni-plex.com/rfidservice/service1.svc"
+      "https://gpbfpr.tekni-plex.com/rfidservice1/service1.svc"
     ],
     "collectionTypes": [
       "System.Array",
