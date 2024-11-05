@@ -21,13 +21,15 @@ namespace IntellitrackReceptor.Controllers
         private readonly IReseptorService _reseptorService;
         private readonly string _eventSource = "IntellitrackReceptorApp"; // Fuente de eventos
         private readonly string _logName = "Application"; // Log de aplicación (por defecto)
-
-        public IntellitrackReceptorController(ILogger<IntellitrackReceptorController> logger, IReseptorService reseptorService)
+        private readonly IConfiguration _configuration;
+        public IntellitrackReceptorController(ILogger<IntellitrackReceptorController> logger, IReseptorService reseptorService, IConfiguration configuration)
         {
             try
             {
                 _logger = logger;
                 _reseptorService = reseptorService;
+                _configuration = configuration;
+
                 if (!EventLog.SourceExists(_eventSource))
                 {
                     EventLog.CreateEventSource(_eventSource, _logName);
@@ -42,10 +44,10 @@ namespace IntellitrackReceptor.Controllers
         [HttpPost]
         public async Task<IActionResult> HandleEvent([FromBody] JsonElement data, [FromHeader(Name = "Client-ID")] string clientId, [FromHeader(Name = "Client-Secret")] string clientSecret)
         {
-            //var expectedClientId = configuration["Authentication:ClientId"];
-            //var expectedClientSecret = configuration["Authentication:ClientSecret"];
-            var expectedClientId = "77c3b787-783a-4188-a20f-49906e78d4e9";
-            var expectedClientSecret = "atc~PTRXjBYoM0Lz6hIvnH6QDc5GE1fpzjS8";
+            var expectedClientId = _configuration["Authentication:ClientId"];
+            var expectedClientSecret = _configuration["Authentication:ClientSecret"];
+            //var expectedClientId = "77c3b787-783a-4188-a20f-49906e78d4e9";
+            //var expectedClientSecret = "atc~PTRXjBYoM0Lz6hIvnH6QDc5GE1fpzjS8";
 
             // Verificar si el Client ID y Client Secret coinciden
             if (clientId != expectedClientId || clientSecret != expectedClientSecret)

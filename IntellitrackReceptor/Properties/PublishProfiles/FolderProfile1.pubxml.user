@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\jccubillos\OneDrive - Tekni-Plex, Inc\Documents\IntellitrackReceptor\IntellitrackReceptor\bin\Release\net8.0\publish\</_PublishTargetUrl>
+    <History>False|2024-11-05T14:01:25.3835633Z||;False|2024-11-05T09:00:09.4732348-05:00||;True|2024-11-05T08:44:30.2580185-05:00||;True|2024-11-05T07:39:45.3827302-05:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>
