@@ -10,6 +10,7 @@ using IntellitrackReceptor.Models;
 using IntellitrackReceptor.Services;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
+using System.Threading;
 
 namespace IntellitrackReceptor.Controllers
 {
@@ -19,9 +20,11 @@ namespace IntellitrackReceptor.Controllers
     {
         private readonly ILogger<IntellitrackReceptorController> _logger;
         private readonly IReseptorService _reseptorService;
+        
         private readonly string _eventSource = "IntellitrackReceptorApp"; // Fuente de eventos
         private readonly string _logName = "Application"; // Log de aplicación (por defecto)
         private readonly IConfiguration _configuration;
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         public IntellitrackReceptorController(ILogger<IntellitrackReceptorController> logger, IReseptorService reseptorService, IConfiguration configuration)
         {
             try
@@ -91,7 +94,6 @@ namespace IntellitrackReceptor.Controllers
                                 eventData.TryGetProperty("data", out JsonElement dataElement);
                                 var eventObject = System.Text.Json.JsonSerializer.Deserialize<EventData>(dataElement.ToString());
                                 _logger.LogWarning($"Unhandled event type: {eventType}");
-                                _logger.LogWarning($"Unhandled event type: {eventType}");
 
                                 var reseptorRequest = new ReseptorRequest
                                 {
@@ -99,8 +101,18 @@ namespace IntellitrackReceptor.Controllers
                                     Evnt = eventObject.Data.DestinationLocation.FullName.ToString(),
                                     Logn = "Interface"
                                 };
-
-                                var result = await _reseptorService.SendReseptorRequest(reseptorRequest);
+                                _logger.LogWarning(" Rfid: " + reseptorRequest.Rfid + " Evnt: " + reseptorRequest.Evnt + " Logn: " + reseptorRequest.Logn);
+                                await _semaphore.WaitAsync();
+                                try
+                                {
+                                    var result = await _reseptorService.SendReseptorRequest(reseptorRequest);
+                                }
+                                finally
+                                {
+                                    _semaphore.Release(); // Liberar el semáforo
+                                }
+                                await Task.Delay(10000);
+                                _logger.LogInformation($"Respuesta recibida para Rfid: {reseptorRequest.Rfid}");
 
                             }
                         }

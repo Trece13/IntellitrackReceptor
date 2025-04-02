@@ -1768,12 +1768,22 @@ namespace ServiceRfidTekni
             }
             throw new System.InvalidOperationException(string.Format("No se pudo encontrar un punto de conexión con el nombre \"{0}\".", endpointConfiguration));
         }
-        
+
+        private static readonly IConfiguration Configuration = new ConfigurationBuilder()
+       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+       .Build();
+
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
+            string serviceUrl = Configuration["ServiceEndpoints:ServiceRfidTekni"];
+            if (string.IsNullOrEmpty(serviceUrl))
+            {
+                throw new System.InvalidOperationException("La URL del servicio no está configurada en appsettings.json.");
+            }
+
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpsBinding_IService1))
             {
-                return new System.ServiceModel.EndpointAddress("https://gpbfpr.tekni-plex.com/RfidService1/Service1.svc");
+                return new System.ServiceModel.EndpointAddress(serviceUrl);
             }
             throw new System.InvalidOperationException(string.Format("No se pudo encontrar un punto de conexión con el nombre \"{0}\".", endpointConfiguration));
         }

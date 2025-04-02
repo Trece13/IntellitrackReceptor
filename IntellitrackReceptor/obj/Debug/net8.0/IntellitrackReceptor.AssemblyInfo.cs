@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IntellitrackReceptor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+838a93882b790b4ac8897fafc7696974c3ecd89e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b26a93d52124fa451febfe687915cb11ec21d6b7")]
 [assembly: System.Reflection.AssemblyProductAttribute("IntellitrackReceptor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IntellitrackReceptor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

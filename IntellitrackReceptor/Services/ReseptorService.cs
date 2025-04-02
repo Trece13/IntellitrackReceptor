@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Management.Automation;
 using System.Diagnostics.Tracing;
+using System.Threading;
 
 namespace IntellitrackReceptor.Services
 {
@@ -15,6 +16,7 @@ namespace IntellitrackReceptor.Services
         private readonly ILogger<ReseptorService> _logger;
         private readonly string _eventSource = "IntellitrackReceptorApp"; // Fuente de eventos
         private readonly string _logName = "Application"; // Log de aplicación (por defecto)
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public ReseptorService(ILogger<ReseptorService> logger,Service1Client service1Client)
         {
@@ -28,19 +30,15 @@ namespace IntellitrackReceptor.Services
 
         public async Task<ReseptorResponse> SendReseptorRequest(Models.ReseptorRequest request)
         {
+            await _semaphore.WaitAsync();
             try
             {
-                EventLog.WriteEntry(_eventSource, "Se consultara el WCF:", EventLogEntryType.Information);
-                var res = await _service1Client.ReseptorAsync(request.Rfid, request.Evnt, request.Logn);
-                EventLog.WriteEntry(_eventSource, "Resultado servicio WCF: " + res, EventLogEntryType.Information);
-
-                return res;
+                _logger.LogWarning($"Llamando al WCF -> Rfid: {request.Rfid}");
+                return await _service1Client.ReseptorAsync(request.Rfid, request.Evnt, request.Logn);
             }
-            catch (Exception ex)
+            finally
             {
-                _logger.LogError(ex, "Error al invocar el servicio WCF en SendReseptorRequest");
-                EventLog.WriteEntry(_eventSource, "Error al invocar el servicio WCF: " + ex.Message, EventLogEntryType.Error);
-                return new ReseptorResponse();
+                _semaphore.Release(); // Liberar el semáforo
             }
         }
 
